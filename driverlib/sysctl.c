@@ -47,38 +47,6 @@ void SysCtl_disableRAMBasedInterruptVectors (void)
     HWREG8(SYS_BASE + OFS_SYSCTL_L) &= ~(SYSRIVECT);
 }
 
-void SysCtl_enableBSLProtect (void)
-{
-    HWREG16(SYS_BASE + OFS_SYSBSLC) |= SYSBSLPE;
-}
-
-void SysCtl_disableBSLProtect (void)
-{
-    HWREG16(SYS_BASE + OFS_SYSBSLC) &= ~(SYSBSLPE);
-}
-
-void SysCtl_enableBSLMemory (void)
-{
-    HWREG16(SYS_BASE + OFS_SYSBSLC) &= ~(SYSBSLOFF);
-}
-
-void SysCtl_disableBSLMemory (void)
-{
-    HWREG16(SYS_BASE + OFS_SYSBSLC) |= SYSBSLOFF;
-}
-
-void SysCtl_setRAMAssignedToBSL (uint8_t BSLRAMAssignment)
-{
-    HWREG8(SYS_BASE + OFS_SYSBSLC_L) &= ~(SYSBSLR);
-    HWREG8(SYS_BASE + OFS_SYSBSLC_L) |= BSLRAMAssignment;
-}
-
-void SysCtl_setBSLSize (uint8_t BSLSizeSelect)
-{
-    HWREG8(SYS_BASE + OFS_SYSBSLC_L) &= ~(SYSBSLSIZE0 + SYSBSLSIZE1);
-    HWREG8(SYS_BASE + OFS_SYSBSLC_L) |= BSLSizeSelect;
-}
-
 void SysCtl_initJTAGMailbox (uint8_t mailboxSizeSelect,
     uint8_t autoClearInboxFlagSelect)
 {

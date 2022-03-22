@@ -37,7 +37,6 @@ extern "C"
 #define SFR_VACANT_MEMORY_ACCESS_INTERRUPT                                VMAIE
 #define SFR_OSCILLATOR_FAULT_INTERRUPT                                     OFIE
 #define SFR_WATCHDOG_INTERVAL_TIMER_INTERRUPT                             WDTIE
-#define SFR_FLASH_CONTROLLER_ACCESS_VIOLATION_INTERRUPT                  ACCVIE
 
 //*****************************************************************************
 //
@@ -79,22 +78,19 @@ extern "C"
 //!
 //! This function enables the selected SFR interrupt sources. Only the sources
 //! that are enabled can be reflected to the processor interrupt; disabled
-//! sources have no effect on the processor.
+//! sources have no effect on the processor. Does not clear interrupt flags.
 //!
 //! \param interruptMask is the bit mask of interrupts that will be enabled.
 //!        Mask value is the logical OR of any of the following:
-//!        - \b SFR_JTAG_OUTBOX_INTERRUPT - JTAG outbox interrupt enable
-//!        - \b SFR_JTAG_INBOX_INTERRUPT - JTAG inbox interrupt enable
-//!        - \b SFR_NMI_PIN_INTERRUPT - NMI pin interrupt enable, if NMI
-//!           function is chosen
+//!        - \b SFR_JTAG_OUTBOX_INTERRUPT - JTAG outbox interrupt
+//!        - \b SFR_JTAG_INBOX_INTERRUPT - JTAG inbox interrupt
+//!        - \b SFR_NMI_PIN_INTERRUPT - NMI pin interrupt, if NMI function is
+//!           chosen
 //!        - \b SFR_VACANT_MEMORY_ACCESS_INTERRUPT - Vacant memory access
-//!           interrupt enable
+//!           interrupt
 //!        - \b SFR_OSCILLATOR_FAULT_INTERRUPT - Oscillator fault interrupt
-//!           enable
 //!        - \b SFR_WATCHDOG_INTERVAL_TIMER_INTERRUPT - Watchdog interval timer
-//!           interrupt enable
-//!        - \b SFR_FLASH_CONTROLLER_ACCESS_VIOLATION_INTERRUPT - Flash
-//!           controller access violation interrupt enable
+//!           interrupt
 //!
 //! \return None
 //
@@ -111,18 +107,15 @@ extern void SFR_enableInterrupt(uint8_t interruptMask);
 //!
 //! \param interruptMask is the bit mask of interrupts that will be disabled.
 //!        Mask value is the logical OR of any of the following:
-//!        - \b SFR_JTAG_OUTBOX_INTERRUPT - JTAG outbox interrupt enable
-//!        - \b SFR_JTAG_INBOX_INTERRUPT - JTAG inbox interrupt enable
-//!        - \b SFR_NMI_PIN_INTERRUPT - NMI pin interrupt enable, if NMI
-//!           function is chosen
+//!        - \b SFR_JTAG_OUTBOX_INTERRUPT - JTAG outbox interrupt
+//!        - \b SFR_JTAG_INBOX_INTERRUPT - JTAG inbox interrupt
+//!        - \b SFR_NMI_PIN_INTERRUPT - NMI pin interrupt, if NMI function is
+//!           chosen
 //!        - \b SFR_VACANT_MEMORY_ACCESS_INTERRUPT - Vacant memory access
-//!           interrupt enable
+//!           interrupt
 //!        - \b SFR_OSCILLATOR_FAULT_INTERRUPT - Oscillator fault interrupt
-//!           enable
 //!        - \b SFR_WATCHDOG_INTERVAL_TIMER_INTERRUPT - Watchdog interval timer
-//!           interrupt enable
-//!        - \b SFR_FLASH_CONTROLLER_ACCESS_VIOLATION_INTERRUPT - Flash
-//!           controller access violation interrupt enable
+//!           interrupt
 //!
 //! \return None
 //
@@ -139,32 +132,27 @@ extern void SFR_disableInterrupt(uint8_t interruptMask);
 //! \param interruptFlagMask is the bit mask of interrupt flags that the status
 //!        of should be returned.
 //!        Mask value is the logical OR of any of the following:
-//!        - \b SFR_JTAG_OUTBOX_INTERRUPT - JTAG outbox interrupt enable
-//!        - \b SFR_JTAG_INBOX_INTERRUPT - JTAG inbox interrupt enable
-//!        - \b SFR_NMI_PIN_INTERRUPT - NMI pin interrupt enable, if NMI
-//!           function is chosen
+//!        - \b SFR_JTAG_OUTBOX_INTERRUPT - JTAG outbox interrupt
+//!        - \b SFR_JTAG_INBOX_INTERRUPT - JTAG inbox interrupt
+//!        - \b SFR_NMI_PIN_INTERRUPT - NMI pin interrupt, if NMI function is
+//!           chosen
 //!        - \b SFR_VACANT_MEMORY_ACCESS_INTERRUPT - Vacant memory access
-//!           interrupt enable
+//!           interrupt
 //!        - \b SFR_OSCILLATOR_FAULT_INTERRUPT - Oscillator fault interrupt
-//!           enable
 //!        - \b SFR_WATCHDOG_INTERVAL_TIMER_INTERRUPT - Watchdog interval timer
-//!           interrupt enable
-//!        - \b SFR_FLASH_CONTROLLER_ACCESS_VIOLATION_INTERRUPT - Flash
-//!           controller access violation interrupt enable
+//!           interrupt
 //!
-//! \return Logical OR of any of the following:
-//!         - \b SFR_JTAG_OUTBOX_INTERRUPT JTAG outbox interrupt enable
-//!         - \b SFR_JTAG_INBOX_INTERRUPT JTAG inbox interrupt enable
-//!         - \b SFR_NMI_PIN_INTERRUPT NMI pin interrupt enable, if NMI
-//!         function is chosen
+//! \return A bit mask of the status of the selected interrupt flags.
+//!         Return Logical OR of any of the following:
+//!         - \b SFR_JTAG_OUTBOX_INTERRUPT JTAG outbox interrupt
+//!         - \b SFR_JTAG_INBOX_INTERRUPT JTAG inbox interrupt
+//!         - \b SFR_NMI_PIN_INTERRUPT NMI pin interrupt, if NMI function is
+//!         chosen
 //!         - \b SFR_VACANT_MEMORY_ACCESS_INTERRUPT Vacant memory access
-//!         interrupt enable
+//!         interrupt
 //!         - \b SFR_OSCILLATOR_FAULT_INTERRUPT Oscillator fault interrupt
-//!         enable
 //!         - \b SFR_WATCHDOG_INTERVAL_TIMER_INTERRUPT Watchdog interval timer
-//!         interrupt enable
-//!         - \b SFR_FLASH_CONTROLLER_ACCESS_VIOLATION_INTERRUPT Flash
-//!         controller access violation interrupt enable
+//!         interrupt
 //!         \n indicating the status of the masked interrupts
 //
 //*****************************************************************************
@@ -176,21 +164,18 @@ extern uint8_t SFR_getInterruptStatus(uint8_t interruptFlagMask);
 //!
 //! This function clears the status of the selected SFR interrupt flags.
 //!
-//! \param interruptFlagMask is the bit mask of interrupt flags that should be
-//!        cleared
+//! \param interruptFlagMask is the bit mask of interrupt flags that will be
+//!        cleared.
 //!        Mask value is the logical OR of any of the following:
-//!        - \b SFR_JTAG_OUTBOX_INTERRUPT - JTAG outbox interrupt enable
-//!        - \b SFR_JTAG_INBOX_INTERRUPT - JTAG inbox interrupt enable
-//!        - \b SFR_NMI_PIN_INTERRUPT - NMI pin interrupt enable, if NMI
-//!           function is chosen
+//!        - \b SFR_JTAG_OUTBOX_INTERRUPT - JTAG outbox interrupt
+//!        - \b SFR_JTAG_INBOX_INTERRUPT - JTAG inbox interrupt
+//!        - \b SFR_NMI_PIN_INTERRUPT - NMI pin interrupt, if NMI function is
+//!           chosen
 //!        - \b SFR_VACANT_MEMORY_ACCESS_INTERRUPT - Vacant memory access
-//!           interrupt enable
+//!           interrupt
 //!        - \b SFR_OSCILLATOR_FAULT_INTERRUPT - Oscillator fault interrupt
-//!           enable
 //!        - \b SFR_WATCHDOG_INTERVAL_TIMER_INTERRUPT - Watchdog interval timer
-//!           interrupt enable
-//!        - \b SFR_FLASH_CONTROLLER_ACCESS_VIOLATION_INTERRUPT - Flash
-//!           controller access violation interrupt enable
+//!           interrupt
 //!
 //! \return None
 //
@@ -210,7 +195,8 @@ extern void SFR_clearInterrupt(uint8_t interruptFlagMask);
 //!        - \b SFR_RESISTORDISABLE
 //!        - \b SFR_RESISTORENABLE_PULLUP [Default]
 //!        - \b SFR_RESISTORENABLE_PULLDOWN
-//!        \n Modified bits are \b SYSRSTUP of \b SFRRPCR register.
+//!        \n Modified bits are \b SYSRSTUP and \b SYSRSTRE of \b SFRRPCR
+//!        register.
 //!
 //! \return None
 //

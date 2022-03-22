@@ -13,22 +13,23 @@
 
 #include "inc/hw_memmap.h"
 
-#ifdef __MSP430_HAS_RC__
+#ifdef __MSP430_HAS_RC_FRAM__
 #include "ram.h"
 
 #include <assert.h>
 
-void RAM_setSectorOff (uint8_t sector
-    )
+void RAM_setSectorOff(uint8_t sector, uint8_t mode)
 {
-    //Write key to start write to RCCTL0 and sector
-    HWREG16(RAM_BASE + OFS_RCCTL0) = (RCKEY + sector);
+    uint8_t sectorPos = sector<<1;
+    uint8_t val = HWREG8(RAM_BASE + OFS_RCCTL0_L) & ~(0x3 << sectorPos);
+
+    HWREG16(RAM_BASE + OFS_RCCTL0) = (RCKEY | val | (mode << sectorPos));
 }
 
-uint8_t RAM_getSectorState (uint8_t sector
-    )
+uint8_t RAM_getSectorState (uint8_t sector)
 {
-    return (HWREG8(RAM_BASE + OFS_RCCTL0_L) & sector);
+    uint8_t sectorPos = sector<<1;
+    return (HWREG8(RAM_BASE + OFS_RCCTL0_L) & (0x3<<sectorPos)) >> sectorPos;
 }
 
 #endif

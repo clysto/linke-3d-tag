@@ -13,7 +13,8 @@
 
 #include "inc/hw_memmap.h"
 
-#ifdef __MSP430_HAS_PORT1_R__
+#if defined(__MSP430_HAS_PORT1_R__) || defined(__MSP430_HAS_PORT2_R__) ||\
+    defined(__MSP430_HAS_PORTA_R__)
 #include "gpio.h"
 
 #include <assert.h>
@@ -122,7 +123,8 @@ void GPIO_setAsOutputPin(uint8_t selectedPort, uint16_t selectedPins) {
         selectedPins <<= 8;
     }
 
-    HWREG16(baseAddress + OFS_PASEL) &= ~selectedPins;
+    HWREG16(baseAddress + OFS_PASEL0) &= ~selectedPins;
+    HWREG16(baseAddress + OFS_PASEL1) &= ~selectedPins;
     HWREG16(baseAddress + OFS_PADIR) |= selectedPins;
 
     return;
@@ -143,14 +145,15 @@ void GPIO_setAsInputPin(uint8_t selectedPort, uint16_t selectedPins) {
         selectedPins <<= 8;
     }
 
-    HWREG16(baseAddress + OFS_PASEL) &= ~selectedPins;
+    HWREG16(baseAddress + OFS_PASEL0) &= ~selectedPins;
+    HWREG16(baseAddress + OFS_PASEL1) &= ~selectedPins;
     HWREG16(baseAddress + OFS_PADIR) &= ~selectedPins;
     HWREG16(baseAddress + OFS_PAREN) &= ~selectedPins;
 }
 
 void GPIO_setAsPeripheralModuleFunctionOutputPin(uint8_t selectedPort,
                                                       uint16_t selectedPins
-) {
+                                                     ,uint8_t mode) {
 
     uint16_t baseAddress = GPIO_PORT_TO_BASE[selectedPort];
 
@@ -166,12 +169,25 @@ void GPIO_setAsPeripheralModuleFunctionOutputPin(uint8_t selectedPort,
     }
 
     HWREG16(baseAddress + OFS_PADIR) |= selectedPins;
-    HWREG16(baseAddress + OFS_PASEL) |= selectedPins;
+    switch (mode){
+        case GPIO_PRIMARY_MODULE_FUNCTION:
+            HWREG16(baseAddress + OFS_PASEL0) |= selectedPins;
+            HWREG16(baseAddress + OFS_PASEL1) &= ~selectedPins;
+            break;
+        case GPIO_SECONDARY_MODULE_FUNCTION:
+            HWREG16(baseAddress + OFS_PASEL0) &= ~selectedPins;
+            HWREG16(baseAddress + OFS_PASEL1) |= selectedPins;
+            break;
+        case GPIO_TERNARY_MODULE_FUNCTION:
+            HWREG16(baseAddress + OFS_PASEL0) |= selectedPins;
+            HWREG16(baseAddress + OFS_PASEL1) |= selectedPins;
+            break;
+    }
 }
 
 void GPIO_setAsPeripheralModuleFunctionInputPin(uint8_t selectedPort,
                                                      uint16_t selectedPins
-) {
+                                                     ,uint8_t mode) {
     uint16_t baseAddress = GPIO_PORT_TO_BASE[selectedPort];
 
     #ifndef NDEBUG
@@ -186,7 +202,20 @@ void GPIO_setAsPeripheralModuleFunctionInputPin(uint8_t selectedPort,
     }
 
     HWREG16(baseAddress + OFS_PADIR) &= ~selectedPins;
-    HWREG16(baseAddress + OFS_PASEL) |= selectedPins;
+    switch (mode){
+        case GPIO_PRIMARY_MODULE_FUNCTION:
+            HWREG16(baseAddress + OFS_PASEL0) |= selectedPins;
+            HWREG16(baseAddress + OFS_PASEL1) &= ~selectedPins;
+            break;
+        case GPIO_SECONDARY_MODULE_FUNCTION:
+            HWREG16(baseAddress + OFS_PASEL0) &= ~selectedPins;
+            HWREG16(baseAddress + OFS_PASEL1) |= selectedPins;
+            break;
+        case GPIO_TERNARY_MODULE_FUNCTION:
+            HWREG16(baseAddress + OFS_PASEL0) |= selectedPins;
+            HWREG16(baseAddress + OFS_PASEL1) |= selectedPins;
+            break;
+    }
 }
 
 void GPIO_setOutputHighOnPin (uint8_t selectedPort,
@@ -260,7 +289,8 @@ void GPIO_setAsInputPinWithPullDownResistor(uint8_t selectedPort,
         selectedPins <<= 8;
     }
 
-    HWREG16(baseAddress + OFS_PASEL) &= ~selectedPins;
+    HWREG16(baseAddress + OFS_PASEL0) &= ~selectedPins;
+    HWREG16(baseAddress + OFS_PASEL1) &= ~selectedPins;
 
     HWREG16(baseAddress + OFS_PADIR) &= ~selectedPins;
     HWREG16(baseAddress + OFS_PAREN) |= selectedPins;
@@ -283,7 +313,8 @@ void GPIO_setAsInputPinWithPullUpResistor(uint8_t selectedPort,
         selectedPins <<= 8;
     }
 
-    HWREG16(baseAddress + OFS_PASEL) &= ~selectedPins;
+    HWREG16(baseAddress + OFS_PASEL0) &= ~selectedPins;
+    HWREG16(baseAddress + OFS_PASEL1) &= ~selectedPins;
     HWREG16(baseAddress + OFS_PADIR) &= ~selectedPins;
     HWREG16(baseAddress + OFS_PAREN) |= selectedPins;
     HWREG16(baseAddress + OFS_PAOUT) |= selectedPins;
@@ -417,28 +448,6 @@ void GPIO_selectInterruptEdge(uint8_t selectedPort, uint16_t selectedPins,
     }
 }
 
-void GPIO_setDriveStrength(uint8_t selectedPort, uint16_t selectedPins,
-                                uint8_t driveStrength) {
-
-    uint16_t baseAddress = GPIO_PORT_TO_BASE[selectedPort];
-
-    #ifndef NDEBUG
-    if(baseAddress == 0xFFFF) {
-        return;
-    }
-    #endif
-
-    // Shift by 8 if port is even (upper 8-bits)
-    if((selectedPort & 1) ^ 1) {
-        selectedPins <<= 8;
-    }
-
-    if(GPIO_REDUCED_OUTPUT_DRIVE_STRENGTH == driveStrength) {
-        HWREG16(baseAddress + OFS_PADS) &= ~selectedPins;
-    } else  {
-        HWREG16(baseAddress + OFS_PADS) |= selectedPins;
-    }
-}
 
 #endif
 //*****************************************************************************

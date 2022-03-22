@@ -9,7 +9,7 @@
 
 #include "inc/hw_memmap.h"
 
-#ifdef __MSP430_HAS_RC__
+#ifdef __MSP430_HAS_RC_FRAM__
 
 //*****************************************************************************
 //
@@ -25,18 +25,24 @@ extern "C"
 //*****************************************************************************
 //
 // The following are values that can be passed to the sector parameter for
-// functions: RAM_setSectorOff(), and RAM_getSectorState() as well as returned
-// by the RAM_getSectorState() function.
+// functions: RAM_setSectorOff(), and RAM_getSectorState().
 //
 //*****************************************************************************
-#define RAM_SECTOR0                                                    RCRS0OFF
-#define RAM_SECTOR1                                                    RCRS1OFF
-#define RAM_SECTOR2                                                    RCRS2OFF
-#define RAM_SECTOR3                                                    RCRS3OFF
-#define RAM_SECTOR4                                                    RCRS4OFF
-#define RAM_SECTOR5                                                    RCRS5OFF
-#define RAM_SECTOR6                                                    RCRS6OFF
-#define RAM_SECTOR7                                                    RCRS7OFF
+#define RAM_SECTOR0                                                      (0x00)
+#define RAM_SECTOR1                                                      (0x01)
+#define RAM_SECTOR2                                                      (0x02)
+#define RAM_SECTOR3                                                      (0x03)
+
+//*****************************************************************************
+//
+// The following are values that can be passed to the mode parameter for
+// functions: RAM_setSectorOff() as well as returned by the
+// RAM_getSectorState() function.
+//
+//*****************************************************************************
+#define RAM_RETENTION_MODE                                               (0x00)
+#define RAM_OFF_WAKEUP_MODE                                         (RCRS0OFF0)
+#define RAM_OFF_NON_WAKEUP_MODE                                     (RCRS0OFF1)
 
 //*****************************************************************************
 //
@@ -49,49 +55,40 @@ extern "C"
 //! \brief Set specified RAM sector off
 //!
 //! \param sector is specified sector to be set off.
-//!        Mask value is the logical OR of any of the following:
+//!        Valid values are:
 //!        - \b RAM_SECTOR0
 //!        - \b RAM_SECTOR1
 //!        - \b RAM_SECTOR2
 //!        - \b RAM_SECTOR3
-//!        - \b RAM_SECTOR4
-//!        - \b RAM_SECTOR5
-//!        - \b RAM_SECTOR6
-//!        - \b RAM_SECTOR7
+//! \param mode is sector off mode
+//!        Valid values are:
+//!        - \b RAM_RETENTION_MODE
+//!        - \b RAM_OFF_WAKEUP_MODE
+//!        - \b RAM_OFF_NON_WAKEUP_MODE
 //!
 //! Modified bits of \b RCCTL0 register.
 //!
 //! \return None
 //
 //*****************************************************************************
-extern void RAM_setSectorOff(uint8_t sector);
+extern void RAM_setSectorOff(uint8_t sector,
+                             uint8_t mode);
 
 //*****************************************************************************
 //
 //! \brief Get RAM sector ON/OFF status
 //!
 //! \param sector is specified sector
-//!        Mask value is the logical OR of any of the following:
+//!        Valid values are:
 //!        - \b RAM_SECTOR0
 //!        - \b RAM_SECTOR1
 //!        - \b RAM_SECTOR2
 //!        - \b RAM_SECTOR3
-//!        - \b RAM_SECTOR4
-//!        - \b RAM_SECTOR5
-//!        - \b RAM_SECTOR6
-//!        - \b RAM_SECTOR7
 //!
-//! Modified bits of \b RCCTL0 register.
-//!
-//! \return Logical OR of any of the following:
-//!         - \b RAM_SECTOR0
-//!         - \b RAM_SECTOR1
-//!         - \b RAM_SECTOR2
-//!         - \b RAM_SECTOR3
-//!         - \b RAM_SECTOR4
-//!         - \b RAM_SECTOR5
-//!         - \b RAM_SECTOR6
-//!         - \b RAM_SECTOR7
+//! \return One of the following:
+//!         - \b RAM_RETENTION_MODE
+//!         - \b RAM_OFF_WAKEUP_MODE
+//!         - \b RAM_OFF_NON_WAKEUP_MODE
 //!         \n indicating the status of the masked sectors
 //
 //*****************************************************************************

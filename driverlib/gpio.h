@@ -9,7 +9,8 @@
 
 #include "inc/hw_memmap.h"
 
-#ifdef __MSP430_HAS_PORT1_R__
+#if defined(__MSP430_HAS_PORT1_R__) || defined(__MSP430_HAS_PORT2_R__) ||\
+    defined(__MSP430_HAS_PORTA_R__)
 
 //*****************************************************************************
 //
@@ -31,9 +32,8 @@ extern "C"
 // GPIO_setOutputLowOnPin(), GPIO_toggleOutputOnPin(),
 // GPIO_setAsInputPinWithPullDownResistor(),
 // GPIO_setAsInputPinWithPullUpResistor(), GPIO_getInputPinValue(),
-// GPIO_selectInterruptEdge(), GPIO_setDriveStrength(), GPIO_enableInterrupt(),
-// GPIO_disableInterrupt(), GPIO_getInterruptStatus(), and
-// GPIO_clearInterrupt().
+// GPIO_selectInterruptEdge(), GPIO_enableInterrupt(), GPIO_disableInterrupt(),
+// GPIO_getInterruptStatus(), and GPIO_clearInterrupt().
 //
 //*****************************************************************************
 #define GPIO_PORT_P1                                                          1
@@ -65,9 +65,8 @@ extern "C"
 // GPIO_setAsInputPinWithPullDownResistor(),
 // GPIO_setAsInputPinWithPullUpResistor(), GPIO_getInputPinValue(),
 // GPIO_enableInterrupt(), GPIO_disableInterrupt(), GPIO_getInterruptStatus(),
-// GPIO_clearInterrupt(), GPIO_selectInterruptEdge(), and
-// GPIO_setDriveStrength() as well as returned by the GPIO_getInterruptStatus()
-// function.
+// GPIO_clearInterrupt(), and GPIO_selectInterruptEdge() as well as returned by
+// the GPIO_getInterruptStatus() function.
 //
 //*****************************************************************************
 #define GPIO_PIN0                                                      (0x0001)
@@ -91,6 +90,17 @@ extern "C"
 
 //*****************************************************************************
 //
+// The following are values that can be passed to the mode parameter for
+// functions: GPIO_setAsPeripheralModuleFunctionOutputPin(), and
+// GPIO_setAsPeripheralModuleFunctionInputPin().
+//
+//*****************************************************************************
+#define GPIO_PRIMARY_MODULE_FUNCTION                                     (0x01)
+#define GPIO_SECONDARY_MODULE_FUNCTION                                   (0x02)
+#define GPIO_TERNARY_MODULE_FUNCTION                                     (0x03)
+
+//*****************************************************************************
+//
 // The following are values that can be passed to the edgeSelect parameter for
 // functions: GPIO_selectInterruptEdge().
 //
@@ -106,15 +116,6 @@ extern "C"
 //*****************************************************************************
 #define GPIO_INPUT_PIN_HIGH                                              (0x01)
 #define GPIO_INPUT_PIN_LOW                                               (0x00)
-
-//*****************************************************************************
-//
-// The following are values that can be passed to the driveStrength parameter
-// for functions: GPIO_setDriveStrength().
-//
-//*****************************************************************************
-#define GPIO_REDUCED_OUTPUT_DRIVE_STRENGTH                                 0x00
-#define GPIO_FULL_OUTPUT_DRIVE_STRENGTH                                    0x01
 
 //*****************************************************************************
 //
@@ -283,6 +284,12 @@ extern void GPIO_setAsInputPin(uint8_t selectedPort,
 //!        - \b GPIO_PIN15
 //!        - \b GPIO_PIN_ALL8
 //!        - \b GPIO_PIN_ALL16
+//! \param mode is the specified mode that the pin should be configured for the
+//!        module function.
+//!        Valid values are:
+//!        - \b GPIO_PRIMARY_MODULE_FUNCTION
+//!        - \b GPIO_SECONDARY_MODULE_FUNCTION
+//!        - \b GPIO_TERNARY_MODULE_FUNCTION
 //!
 //! Modified bits of \b PxDIR register and bits of \b PxSEL register.
 //!
@@ -290,7 +297,8 @@ extern void GPIO_setAsInputPin(uint8_t selectedPort,
 //
 //*****************************************************************************
 extern void GPIO_setAsPeripheralModuleFunctionOutputPin(uint8_t selectedPort,
-                                                        uint16_t selectedPins);
+                                                        uint16_t selectedPins,
+                                                        uint8_t mode);
 
 //*****************************************************************************
 //
@@ -342,6 +350,12 @@ extern void GPIO_setAsPeripheralModuleFunctionOutputPin(uint8_t selectedPort,
 //!        - \b GPIO_PIN15
 //!        - \b GPIO_PIN_ALL8
 //!        - \b GPIO_PIN_ALL16
+//! \param mode is the specified mode that the pin should be configured for the
+//!        module function.
+//!        Valid values are:
+//!        - \b GPIO_PRIMARY_MODULE_FUNCTION
+//!        - \b GPIO_SECONDARY_MODULE_FUNCTION
+//!        - \b GPIO_TERNARY_MODULE_FUNCTION
 //!
 //! Modified bits of \b PxDIR register and bits of \b PxSEL register.
 //!
@@ -349,7 +363,8 @@ extern void GPIO_setAsPeripheralModuleFunctionOutputPin(uint8_t selectedPort,
 //
 //*****************************************************************************
 extern void GPIO_setAsPeripheralModuleFunctionInputPin(uint8_t selectedPort,
-                                                       uint16_t selectedPins);
+                                                       uint16_t selectedPins,
+                                                       uint8_t mode);
 
 //*****************************************************************************
 //
@@ -991,68 +1006,6 @@ extern void GPIO_clearInterrupt(uint8_t selectedPort,
 extern void GPIO_selectInterruptEdge(uint8_t selectedPort,
                                      uint16_t selectedPins,
                                      uint8_t edgeSelect);
-
-//*****************************************************************************
-//
-//! \brief This function sets the drive strength for the selected port pin.
-//!
-//! his function sets the drive strength for the selected port pin. Acceptable
-//! values for driveStrength are GPIO_REDUCED_OUTPUT_DRIVE_STRENGTH and
-//! GPIO_FULL_OUTPUT_DRIVE_STRENGTH.
-//!
-//! \param selectedPort is the selected port.
-//!        Valid values are:
-//!        - \b GPIO_PORT_P1
-//!        - \b GPIO_PORT_P2
-//!        - \b GPIO_PORT_P3
-//!        - \b GPIO_PORT_P4
-//!        - \b GPIO_PORT_P5
-//!        - \b GPIO_PORT_P6
-//!        - \b GPIO_PORT_P7
-//!        - \b GPIO_PORT_P8
-//!        - \b GPIO_PORT_P9
-//!        - \b GPIO_PORT_P10
-//!        - \b GPIO_PORT_P11
-//!        - \b GPIO_PORT_PA
-//!        - \b GPIO_PORT_PB
-//!        - \b GPIO_PORT_PC
-//!        - \b GPIO_PORT_PD
-//!        - \b GPIO_PORT_PE
-//!        - \b GPIO_PORT_PF
-//!        - \b GPIO_PORT_PJ
-//! \param selectedPins is the specified pin in the selected port.
-//!        Mask value is the logical OR of any of the following:
-//!        - \b GPIO_PIN0
-//!        - \b GPIO_PIN1
-//!        - \b GPIO_PIN2
-//!        - \b GPIO_PIN3
-//!        - \b GPIO_PIN4
-//!        - \b GPIO_PIN5
-//!        - \b GPIO_PIN6
-//!        - \b GPIO_PIN7
-//!        - \b GPIO_PIN8
-//!        - \b GPIO_PIN9
-//!        - \b GPIO_PIN10
-//!        - \b GPIO_PIN11
-//!        - \b GPIO_PIN12
-//!        - \b GPIO_PIN13
-//!        - \b GPIO_PIN14
-//!        - \b GPIO_PIN15
-//!        - \b GPIO_PIN_ALL8
-//!        - \b GPIO_PIN_ALL16
-//! \param driveStrength specifies the drive strength of the pin
-//!        Valid values are:
-//!        - \b GPIO_REDUCED_OUTPUT_DRIVE_STRENGTH
-//!        - \b GPIO_FULL_OUTPUT_DRIVE_STRENGTH
-//!
-//! Modified bits of \b PxDS register.
-//!
-//! \return None
-//
-//*****************************************************************************
-extern void GPIO_setDriveStrength(uint8_t selectedPort,
-                                  uint16_t selectedPins,
-                                  uint8_t driveStrength);
 
 //*****************************************************************************
 //

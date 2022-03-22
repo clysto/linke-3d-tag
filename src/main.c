@@ -5,7 +5,8 @@ int main(void) {
   // 关闭看门狗
   WDT_A_hold(WDT_A_BASE);
   // Disable the GPIO power-on default high-impedance
-  PM5CTL0 &= ~LOCKLPM5;
+  PMM_unlockLPM5();
+
   // 初始化 SPI
   EUSCI_A_SPI_initMasterParam param = {0};
   param.msbFirst = EUSCI_A_SPI_MSB_FIRST;

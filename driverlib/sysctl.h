@@ -24,26 +24,6 @@ extern "C"
 
 //*****************************************************************************
 //
-// The following are values that can be passed to the BSLRAMAssignment
-// parameter for functions: SysCtl_setRAMAssignedToBSL().
-//
-//*****************************************************************************
-#define SYSCTL_BSLRAMASSIGN_NORAM                                  (!(SYSBSLR))
-#define SYSCTL_BSLRAMASSIGN_LOWEST16BYTES                             (SYSBSLR)
-
-//*****************************************************************************
-//
-// The following are values that can be passed to the BSLSizeSelect parameter
-// for functions: SysCtl_setBSLSize().
-//
-//*****************************************************************************
-#define SYSCTL_BSLSIZE_SEG3                      (~(SYSBSLSIZE0 + SYSBSLSIZE1))
-#define SYSCTL_BSLSIZE_SEGS23                                     (SYSBSLSIZE0)
-#define SYSCTL_BSLSIZE_SEGS123                                    (SYSBSLSIZE1)
-#define SYSCTL_BSLSIZE_SEGS1234                     (SYSBSLSIZE0 + SYSBSLSIZE1)
-
-//*****************************************************************************
-//
 // The following are values that can be passed to the mailboxSizeSelect
 // parameter for functions: SysCtl_initJTAGMailbox().
 //
@@ -176,94 +156,6 @@ extern void SysCtl_enableRAMBasedInterruptVectors(void);
 //
 //*****************************************************************************
 extern void SysCtl_disableRAMBasedInterruptVectors(void);
-
-//*****************************************************************************
-//
-//! \brief Enables BSL memory protection.
-//!
-//! This function enables protection on the BSL memory, which prevents any
-//! reading, programming, or erasing of the BSL memory.
-//!
-//!
-//! \return None
-//
-//*****************************************************************************
-extern void SysCtl_enableBSLProtect(void);
-
-//*****************************************************************************
-//
-//! \brief Disables BSL memory protection.
-//!
-//! This function disables protection on the BSL memory.
-//!
-//!
-//! \return None
-//
-//*****************************************************************************
-extern void SysCtl_disableBSLProtect(void);
-
-//*****************************************************************************
-//
-//! \brief Enables BSL memory.
-//!
-//! This function enables BSL memory, which allows BSL memory to be addressed
-//!
-//!
-//! \return None
-//
-//*****************************************************************************
-extern void SysCtl_enableBSLMemory(void);
-
-//*****************************************************************************
-//
-//! \brief Disables BSL memory.
-//!
-//! This function disables BSL memory, which makes BSL memory act like vacant
-//! memory.
-//!
-//!
-//! \return None
-//
-//*****************************************************************************
-extern void SysCtl_disableBSLMemory(void);
-
-//*****************************************************************************
-//
-//! \brief Sets RAM assignment to BSL area.
-//!
-//! This function allows RAM to be assigned to BSL, based on the selection of
-//! the BSLRAMAssignment parameter.
-//!
-//! \param BSLRAMAssignment is the selection of if the BSL should be placed in
-//!        RAM or not.
-//!        Valid values are:
-//!        - \b SYSCTL_BSLRAMASSIGN_NORAM [Default]
-//!        - \b SYSCTL_BSLRAMASSIGN_LOWEST16BYTES
-//!        \n Modified bits are \b SYSBSLR of \b SYSBSLC register.
-//!
-//! \return None
-//
-//*****************************************************************************
-extern void SysCtl_setRAMAssignedToBSL(uint8_t BSLRAMAssignment);
-
-//*****************************************************************************
-//
-//! \brief Sets the size of the BSL in Flash.
-//!
-//! This function sets the size of the BSL in Flash memory.
-//!
-//! \param BSLSizeSelect is the amount of segments the BSL should take.
-//!        Valid values are:
-//!        - \b SYSCTL_BSLSIZE_SEG3
-//!        - \b SYSCTL_BSLSIZE_SEGS23
-//!        - \b SYSCTL_BSLSIZE_SEGS123
-//!        - \b SYSCTL_BSLSIZE_SEGS1234 [Default]
-//!        \n Modified bits are \b SYSBSLSIZE of \b SYSBSLC register.
-//!
-//! \return None
-//
-//*****************************************************************************
-extern void SysCtl_setBSLSize(uint8_t BSLSizeSelect);
 
 //*****************************************************************************
 //
