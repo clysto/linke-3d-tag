@@ -1,6 +1,24 @@
 #ifndef ACCEL_H
 #define ACCEL_H
 
+#include <msp430.h>
+
+#define BITSET(port, pin) port |= (pin)
+#define BITCLR(port, pin) port &= ~(pin)
+#define BITTOG(port, pin) port ^= (pin)
+
+// P4.2 - ACCEL_EN - OUTPUT
+#define PIN_ACCEL_EN BIT2
+#define POUT_ACCEL_EN P4OUT
+#define PDIR_ACCEL_EN P4DIR
+
+// P4.3 - ACCEL_CS - OUTPUT
+#define PIN_ACCEL_CS BIT3
+#define POUT_ACCEL_CS P4OUT
+#define PDIR_ACCEL_CS P4DIR
+
+void ACCEL_init();
+
 //
 // Commands used for ADXL362 read/write access. Commands are sent prior to
 // data/adx.
