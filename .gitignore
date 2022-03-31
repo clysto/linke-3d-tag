@@ -5,3 +5,4 @@
 .DS_Store
 .envrc
 MSP430FR5969.txt
+__pycache__

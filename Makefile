@@ -1,5 +1,7 @@
 SOURCES  = $(wildcard src/*.c)
+ASMFILES = $(wildcard asm/*.S)
 OBJECTS  = $(patsubst %.c,%.o,$(SOURCES))
+OBJECTS += $(patsubst %.S,%.o,$(ASMFILES))
 MAP      = main.map
 MAKEFILE = Makefile
 
@@ -43,6 +45,9 @@ $(DEVICE).out: $(OBJECTS) $(DRIVERLIB_OBJECTS)
 	$(MAKETXT) -O $@ -TITXT $< -I
 
 %.o: %.c
+	$(CC) $(INCLUDES) $(CFLAGS) -c $< -o $@
+
+%.o: %.S
 	$(CC) $(INCLUDES) $(CFLAGS) -c $< -o $@
 
 clean: 

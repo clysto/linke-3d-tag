@@ -1,22 +1,20 @@
 #ifndef ACCEL_H
 #define ACCEL_H
 
-#include <msp430.h>
+#include <driverlib.h>
 
 void ACCEL_init();
 
-//
-// Commands used for ADXL362 read/write access. Commands are sent prior to
-// data/adx.
-//
+uint8_t ACCEL_getDEVID();
+
+uint8_t ACCEL_getPARTID();
+
+// ADXL362 SPI 指令
 #define ADXL_CMD_WRITE_REG 0x0A
 #define ADXL_CMD_READ_REG 0x0B
 #define ADXL_CMD_READ_FIFO 0x0D
 
-//
-// Registers in the ADXL362. Created from the register map given in Table 11 of
-// the datasheet.
-//
+// ADXL362 寄存器地址列表
 #define ADXL_REG_DEVID_AD 0x00
 #define ADXL_REG_DEVID_MST 0x01
 #define ADXL_REG_PARTID 0x02
