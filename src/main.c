@@ -1,9 +1,10 @@
 #include <driverlib.h>
 
-#include "../asm/interface.h"
 #include "accel.h"
 #include "led.h"
 #include "spi.h"
+
+uint8_t const DATA[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
 
 int main(void) {
   // 关闭看门狗
@@ -28,6 +29,9 @@ int main(void) {
 
   // P4.5 配置为天线使能
   GPIO_setAsOutputPin(GPIO_PORT_P4, GPIO_PIN5);
+  
+  // P2.7 配置为天线输出
+  GPIO_setAsOutputPin(GPIO_PORT_P2, GPIO_PIN7);
 
   // P2.3 配置为天线输入
   GPIO_setAsInputPin(GPIO_PORT_P2, GPIO_PIN3);
@@ -47,7 +51,6 @@ int main(void) {
 
   // start
   // LED_turnOnLED1();
-
   __bis_SR_register(LPM4_bits + GIE);
   __no_operation();
   return 0;
