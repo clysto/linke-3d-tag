@@ -14,27 +14,22 @@
 #define	RX_IFG      P2IFG
 
 .global RX_ISR
-
+      
 RX_ISR:
     ; 打开 LED 灯
     BIS.B       #0x01,          &P4OUT
 
 
-    MOV.B       #0xFF,          R5
+    MOV         #0xFFFF,        R5
 WAIT:
-    DEC.B       R5
+    DEC         R5
     JNZ         WAIT
 
-
-    MOV.B       #0xFF,          R5
-LOOP:
-    MOV         DATA,           R_dataPtr
-    MOV.B       #8,             R_byteCt
+    MOV         #DATA,          R_dataPtr
+    MOV.B       #32,            R_byteCt
     MOV.B       #2,             R_cycleCt
-	MOV.B       #30,            R_pulseCt
+    MOV.B       #30,            R_pulseCt
     CALLA       #TX_FM
-    DEC.B       R5
-    JNZ         LOOP
 
     ; 关闭 LED 灯
     BIC.B       #0x01,          &P4OUT
