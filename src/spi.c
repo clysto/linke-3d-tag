@@ -5,9 +5,9 @@
 
 void SPI_init() {
   // DCO 晶振频率设置为 1MHz (CS_DCOFSEL_0)
-  CS_setDCOFreq(CS_DCORSEL_0, CS_DCOFSEL_0);
+  // CS_setDCOFreq(CS_DCORSEL_0, CS_DCOFSEL_0);
   // 设置 SMCLK 的时钟源为 DCO
-  CS_initClockSignal(CS_SMCLK, CS_DCOCLK_SELECT, CS_CLOCK_DIVIDER_1);
+  // CS_initClockSignal(CS_SMCLK, CS_DCOCLK_SELECT, CS_CLOCK_DIVIDER_1);
 
   /**
    * P2.4 为 UCA1CLK  引脚

@@ -3,11 +3,21 @@
 
 #include <driverlib.h>
 
+typedef struct {
+  int16_t x;
+  int16_t y;
+  int16_t z;
+} ACCEL_result;
+
 void ACCEL_init();
 
 uint8_t ACCEL_getDEVID();
 
 uint8_t ACCEL_getPARTID();
+
+uint8_t ACCEL_status();
+
+void ACCEL_singleSample(ACCEL_result *result);
 
 // ADXL362 SPI 指令
 #define ADXL_CMD_WRITE_REG 0x0A
