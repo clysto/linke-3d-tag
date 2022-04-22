@@ -4,6 +4,7 @@
 #include <msp430.h>
 
 void SPI_init() {
+  // 在 main 中已经设置了时钟
   // DCO 晶振频率设置为 1MHz (CS_DCOFSEL_0)
   // CS_setDCOFreq(CS_DCORSEL_0, CS_DCOFSEL_0);
   // 设置 SMCLK 的时钟源为 DCO
@@ -26,6 +27,7 @@ void SPI_init() {
   // SPI 时钟 1MHz
   // 这里如果设置不同的频率,EUSCI_A_SPI_initMaster函数
   // 会通过配置 UCAxBRW 寄存器参数来实现分频
+  // 这里不需要分频
   param.desiredSpiClock = CS_getSMCLK();
   param.msbFirst = EUSCI_A_SPI_MSB_FIRST;
   param.clockPhase = EUSCI_A_SPI_PHASE_DATA_CAPTURED_ONFIRST_CHANGED_ON_NEXT;

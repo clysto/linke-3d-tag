@@ -66,7 +66,7 @@ void ACCEL_init() {
   SPI_transaction(rxBuf, ADXL_CONFIG_MEAS, sizeof(ADXL_CONFIG_MEAS));
   GPIO_setOutputHighOnPin(GPIO_PORT_P4, GPIO_PIN3);
   __delay_cycles(10000);
-  // filter
+  // 配置 filter
   GPIO_setOutputLowOnPin(GPIO_PORT_P4, GPIO_PIN3);
   SPI_transaction(rxBuf, ADXL_CONFIG_FILTER, sizeof(ADXL_CONFIG_FILTER));
   GPIO_setOutputHighOnPin(GPIO_PORT_P4, GPIO_PIN3);
