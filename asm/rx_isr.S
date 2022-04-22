@@ -25,8 +25,11 @@ WAIT:
     DEC         R5
     JNZ         WAIT
 
-    MOV         #DATA,          R_dataPtr
-    MOV.B       #32,            R_byteCt
+    ; 采集加速度计数据
+    CALLA       #sample
+
+    MOV         #BITSTREAM,     R_dataPtr
+    MOV.B       #64,            R_byteCt
     MOV.B       #2,             R_cycleCt
     MOV.B       #30,            R_pulseCt
     CALLA       #TX_FM
