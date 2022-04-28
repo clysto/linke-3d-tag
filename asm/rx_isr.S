@@ -29,7 +29,7 @@ WAIT:
     CALLA       #sample
 
     MOV         #BITSTREAM,     R_dataPtr
-    MOV.B       #64,            R_byteCt
+    MOV.B       #65,            R_byteCt
     MOV.B       #2,             R_cycleCt
     MOV.B       #30,            R_pulseCt
     CALLA       #TX_FM
