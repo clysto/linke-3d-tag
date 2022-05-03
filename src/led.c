@@ -30,6 +30,8 @@ void LED_turnOffLED2() { GPIO_setOutputLowOnPin(GPIO_PORT_PJ, GPIO_PIN6); }
  * LED1 亮起表示1
  * LED2 亮起表示0
  * 从最高位开始发送
+ * 
+ * @param data 要表示的 uint16 数据
  */
 void LED_showUint16(uint16_t data) {
   LED_turnOffLED1();

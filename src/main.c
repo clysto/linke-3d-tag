@@ -11,25 +11,20 @@ uint16_t CRC_SEED = 0x00;
 
 // 前两个字节是前导码序列
 // 最后两个字节是 CRC16 校验
-uint8_t RAW_DATA[32] = {0x00, 0x00, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20,
-                        0x6c, 0x69, 0x6e, 0x6b, 0x65, 0x20, 0x6c, 0x61,
-                        0x62, 0x21, 0x21, 0x21, 0x21, 0x21, 0x21, 0x21,
-                        0x21, 0x21, 0x21, 0x21, 0x21, 0x21, 0x00, 0x00};
+uint8_t RAW_DATA[32] = {0};
 
 // 发送缓冲区(在rx_isr.S中调用)
 uint8_t BITSTREAM[65] = {0};
-      
+
 void sample() {
   ACCEL_result accelResult;
   ACCEL_singleSample(&accelResult);
 
+  // 清空 RAW_DATA
+  memset(RAW_DATA, 0, 32);
+
   // 填充 payload
-  RAW_DATA[2] = (uint16_t)accelResult.x & 0xf;
-  RAW_DATA[3] = (uint16_t)accelResult.x >> 8;
-  RAW_DATA[4] = (uint16_t)accelResult.y & 0xf;
-  RAW_DATA[5] = (uint16_t)accelResult.y >> 8;
-  RAW_DATA[6] = (uint16_t)accelResult.z & 0xf;
-  RAW_DATA[7] = (uint16_t)accelResult.z >> 8;
+  memcpy(RAW_DATA + 2, &accelResult, sizeof(ACCEL_result));
 
   // 计算 CRC (CRC16_CCIT_ZERO)
   CRC_setSeed(CRC_BASE, CRC_SEED);
@@ -41,7 +36,7 @@ void sample() {
   RAW_DATA[30] = (uint8_t)(crcResult & 0xFF);
   RAW_DATA[31] = (uint8_t)((crcResult >> 8) & 0xFF);
 
-  // 清空 RAW_DATA
+  // 清空 BITSTREAM
   memset(BITSTREAM, 0, 65);
 
   // 使用 FM0 对原始数据编码
