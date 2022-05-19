@@ -1,5 +1,5 @@
-#ifndef ENCODE
-#define ENCODE
+#ifndef ENCODE_H
+#define ENCODE_H
 
 #include <driverlib.h>
 

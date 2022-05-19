@@ -2,55 +2,22 @@
 #include <string.h>
 
 #include "accel.h"
-#include "crc.h"
-#include "encode.h"
+#include "comm.h"
 #include "led.h"
 #include "spi.h"
 
-uint16_t CRC_SEED = 0x00;
+uint32_t num = 0;
 
-// 前两个字节是前导码序列
-// 最后两个字节是 CRC16 校验
-uint8_t RAW_DATA[32] = {0};
-
-// 发送缓冲区(在rx_isr.S中调用)
-uint8_t BITSTREAM[65] = {0};
-
-void sample() {
+void beforeSend(uint8_t *payload, int size) {
   ACCEL_result accelResult;
+  // 采集加速度数据
   ACCEL_singleSample(&accelResult);
-
-  // 清空 RAW_DATA
-  memset(RAW_DATA, 0, 32);
-
+  char str[] = "USTC Linke Lab";
   // 填充 payload
-  memcpy(RAW_DATA + 2, &accelResult, sizeof(ACCEL_result));
-
-  // 计算 CRC (CRC16_CCIT_ZERO)
-  CRC_setSeed(CRC_BASE, CRC_SEED);
-  for (int i = 2; i < 30; i++) {
-    // Add all of the values into the CRC signature
-    CRC_set8BitDataReversed(CRC_BASE, RAW_DATA[i]);
-  }
-  uint16_t crcResult = CRC_getResult(CRC_BASE);
-  RAW_DATA[30] = (uint8_t)(crcResult & 0xFF);
-  RAW_DATA[31] = (uint8_t)((crcResult >> 8) & 0xFF);
-
-  // 清空 BITSTREAM
-  memset(BITSTREAM, 0, 65);
-
-  // 使用 FM0 对原始数据编码
-  ENCODE_FM0(RAW_DATA, BITSTREAM, 32);
-  // 填充前导码
-  BITSTREAM[0] = 0xAA;
-  BITSTREAM[1] = 0xAA;
-  BITSTREAM[2] = 0xAA;
-  BITSTREAM[3] = 0xAA;
-  // 帧结束标志
-  // 在帧末尾额外添加一个电平翻转
-  if ((BITSTREAM[63] & 1) == 0) {
-    BITSTREAM[64] = 0x80;
-  }
+  memcpy(payload, &accelResult, sizeof(ACCEL_result));
+  memcpy(payload + sizeof(ACCEL_result), str, sizeof(str));
+  memcpy(payload + sizeof(str) + sizeof(ACCEL_result), &num, sizeof(uint32_t));
+  num++;
 }
 
 int main(void) {
@@ -96,6 +63,12 @@ int main(void) {
   GPIO_clearInterrupt(GPIO_PORT_P2, GPIO_PIN3);
   // 使能RX中断(rx_isr.S)
   GPIO_enableInterrupt(GPIO_PORT_P2, GPIO_PIN3);
+
+  // 配置通信模块
+  COMM_initParam param = {0};
+  // 注册回调函数
+  param.beforeSend = &beforeSend;
+  COMM_init(&param);
 
   __bis_SR_register(LPM4_bits + GIE);
   __no_operation();

@@ -1,6 +1,7 @@
 #include "accel.h"
 
 #include <driverlib.h>
+#include <string.h>
 
 #include "spi.h"
 
@@ -86,11 +87,12 @@ void ACCEL_singleSample(ACCEL_result *result) {
   GPIO_setOutputLowOnPin(GPIO_PORT_P4, GPIO_PIN3);
   SPI_transaction(rxBuf, ADXL_CONFIG_MEAS, sizeof(ADXL_CONFIG_MEAS));
   GPIO_setOutputHighOnPin(GPIO_PORT_P4, GPIO_PIN3);
-
+  __delay_cycles(10000);
   GPIO_setOutputLowOnPin(GPIO_PORT_P4, GPIO_PIN3);
   SPI_transaction(rxBuf, ADXL_READ_XYZ_16BIT, sizeof(ADXL_READ_XYZ_16BIT));
   GPIO_setOutputHighOnPin(GPIO_PORT_P4, GPIO_PIN3);
-  result->x = ((uint16_t)rxBuf[3] << 8) + rxBuf[2];
-  result->y = ((uint16_t)rxBuf[5] << 8) + rxBuf[4];
-  result->z = ((uint16_t)rxBuf[7] << 8) + rxBuf[6];
+  // result->x = ((uint16_t)rxBuf[3] << 8) + rxBuf[2];
+  // result->y = ((uint16_t)rxBuf[5] << 8) + rxBuf[4];
+  // result->z = ((uint16_t)rxBuf[7] << 8) + rxBuf[6];
+  memcpy(result, rxBuf + 2, 6);
 }

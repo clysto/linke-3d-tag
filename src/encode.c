@@ -12,7 +12,8 @@
  * @param size 编码比特流的大小 (byte)
  */
 void ENCODE_FM0(uint8_t *bitstream, uint8_t *encodedBitstream, int size) {
-  uint8_t first, second, pre = 0;
+  // TODO: prev 作为参数
+  uint8_t first, second, pre = 1;
   for (int i = 0; i < size; i++) {
     for (int j = 0; j < 8; j++) {
       int cur_bit = (0x80U >> j) & bitstream[i];
