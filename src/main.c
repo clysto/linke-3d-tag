@@ -13,7 +13,9 @@ void beforeSend(uint8_t *payload, int size) {
   // 采集加速度数据
   ACCEL_singleSample(&accelResult);
   char str[] = "USTC Linke Lab";
+  // char str[] = "1dd50779b41c4a78b5f3a822c84d0b46";
   // 填充 payload
+  // memcpy(payload, str, sizeof(str));
   memcpy(payload, &accelResult, sizeof(ACCEL_result));
   memcpy(payload + sizeof(ACCEL_result), str, sizeof(str));
   memcpy(payload + sizeof(str) + sizeof(ACCEL_result), &num, sizeof(uint32_t));

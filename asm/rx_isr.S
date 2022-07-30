@@ -17,8 +17,7 @@
       
 RX_ISR:
     ; 打开 LED 灯
-    BIS.B       #0x01,          &P4OUT
-
+    ; BIS.B       #0x01,          &P4OUT
 
     MOV         #0xFFFF,        R5
 WAIT:
@@ -35,7 +34,7 @@ WAIT:
     CALLA       #TX_FM
 
     ; 关闭 LED 灯
-    BIC.B       #0x01,          &P4OUT
+    ; BIC.B       #0x01,          &P4OUT
 
     ; 清除中断标记位
     CLR.B       &RX_IFG
