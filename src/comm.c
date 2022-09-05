@@ -32,7 +32,7 @@ void COMM_beforeSend() {
   // IMPORTANT!!!!!!!! 清空 BITSTREAM
   memset(BITSTREAM, 0, 74);
 
-  // 前导码
+  // 前导码 0000 1010 1010 1010 1010 1010 1010 1101 0010 0011
   BITSTREAM[0] = 0x0A;
   BITSTREAM[1] = 0xAA;
   BITSTREAM[2] = 0xAA;
@@ -46,7 +46,9 @@ void COMM_beforeSend() {
     CRC_set8BitDataReversed(CRC_BASE, payload[i]);
   }
   uint16_t crcResult = CRC_getResult(CRC_BASE);
-  memcpy(payload + 32, &crcResult, sizeof(uint16_t));
+  // memcpy(payload + 32, &crcResult, sizeof(uint16_t));
+  payload[32] = (crcResult >> 8) & 0xFFU;
+  payload[33] = crcResult & 0xFFU;
 
   // 使用 FM0 对 payload 编码
   ENCODE_FM0(payload, BITSTREAM + 5, 34);

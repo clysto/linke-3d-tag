@@ -23,7 +23,7 @@ DEVICE  = MSP430FR5969
 CC      = $(GCC_DIR)/msp430-elf-gcc
 GDB     = $(GCC_DIR)/msp430-elf-gdb
 OBJCOPY = $(GCC_DIR)/msp430-elf-objcopy
-FLASHER = $(MSPFLASER)/MSP430Flasher
+FLASHER = $(MSPFLASHER)/MSP430Flasher
 MAKETXT = srec_cat
 
 CFLAGS   = -D__$(DEVICE)__ -mmcu=$(DEVICE) -mlarge -mcode-region=either -mdata-region=lower -Og -Wall -g
@@ -50,6 +50,13 @@ $(DEVICE).out: $(OBJECTS) $(DRIVERLIB_OBJECTS)
 %.o: %.S
 	$(CC) $(INCLUDES) $(CFLAGS) -c $< -o $@
 
+.PHONY: all clean upload grc
+
+grc/ook.py: grc/ook.grc
+	grcc grc/ook.grc -o grc
+
+grc: grc/ook.py
+
 clean: 
 	$(RM) $(OBJECTS)
 	$(RM) $(MAP)
@@ -61,4 +68,4 @@ debug: all
 	$(GDB) $(DEVICE).out
 
 upload:
-	LD_LIBRARY_PATH=$(MSPFLASER) DYLD_LIBRARY_PATH=$(MSPFLASER) $(FLASHER) -w $(DEVICE).txt -v -g -z [VCC]
+	LD_LIBRARY_PATH=$(MSPFLASHER) DYLD_LIBRARY_PATH=$(MSPFLASHER) $(FLASHER) -w $(DEVICE).txt -v -g -z [VCC]

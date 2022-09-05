@@ -6,3 +6,6 @@
 .envrc
 MSP430FR5969.txt
 __pycache__
+*epy_block*.py
+__pycache__
+/grc/ook.py
