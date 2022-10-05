@@ -79,13 +79,13 @@ int main(void) {
   // 1MHz / 20 = 50KHz
   initContParam.clockSourceDivider = TIMER_A_CLOCKSOURCE_DIVIDER_20;
   // 允许中断 CCR0 -> 0 时触发中断
-  initContParam.captureCompareInterruptEnable_CCR0_CCIE = TIMER_A_CCIE_CCR0_INTERRUPT_ENABLE;
+  initContParam.captureCompareInterruptEnable_CCR0_CCIE =
+      TIMER_A_CCIE_CCR0_INTERRUPT_ENABLE;
   initContParam.timerClear = TIMER_A_DO_CLEAR;
   initContParam.startTimer = true;
-  // 100ms 触发一次中断
+  // 50ms 触发一次中断
   initContParam.timerPeriod = 50000 / 10;
   Timer_A_initUpMode(TIMER_A0_BASE, &initContParam);
-
 
   __bis_SR_register(LPM4_bits + GIE);
   __no_operation();

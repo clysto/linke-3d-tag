@@ -1,8 +1,6 @@
-import signal
-import socket
 import concurrent.futures
 import math
-
+import socket
 from struct import unpack
 
 import numpy as np
@@ -215,6 +213,7 @@ class Window(pyglet.window.Window):
         draw_camera(self.player.position, self.player.rotation)
         self.model.batch.draw()
 
+
 def udp_client():
     global x_angle, z_angle, y_angle
     sock = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
@@ -225,18 +224,19 @@ def udp_client():
     while True:
         data = sock.recvfrom(34)[0]
         x, y, z = unpack("hhh", data[:6])
-        x_angle = math.atan(x / math.sqrt(y ** 2 + z ** 2 ))
-        z_angle = math.atan(y / math.sqrt(x ** 2 + z ** 2))
-        y_angle = math.atan(math.sqrt(x ** 2 + y ** 2) / z)
+        x_angle = math.atan(x / math.sqrt(y**2 + z**2))
+        z_angle = math.atan(y / math.sqrt(x**2 + z**2))
+        y_angle = math.atan(math.sqrt(x**2 + y**2) / z)
         # print(x_angle, y_angle, z_angle)
 
 
 def main():
     with concurrent.futures.ThreadPoolExecutor() as pool:
-        pool.submit(udp_client)
+        # pool.submit(udp_client)
         Window(width=800 * 2, height=480 * 2, resizable=True)
         gl.glClearColor(0, 0, 0, 1)  # black
         pyglet.app.run()
+
 
 if __name__ == "__main__":
     main()

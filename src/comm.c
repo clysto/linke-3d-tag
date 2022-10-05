@@ -50,7 +50,7 @@ void COMM_beforeSend() {
   payload[32] = (crcResult >> 8) & 0xFFU;
   payload[33] = crcResult & 0xFFU;
 
-  // 使用 FM0 对 payload 编码
+  // 使用 FM0 对 payload 和 crc 编码
   ENCODE_FM0(payload, BITSTREAM + 5, 34);
 
   // FM0 End-of-Signaling

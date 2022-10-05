@@ -1,0 +1,7 @@
+CompileFlags:
+    Add: 
+        - "-I/Users/maoyachen/Code/linke-3d-tag/driverlib"
+        - "-I/Users/maoyachen/.local/opt/msp430-gcc/include"
+        - "-I/Users/maoyachen/.local/opt/msp430-gcc/msp430-elf/include"
+        - "-D__MSP430FR5969__"
+        - "-Wno-everything"
