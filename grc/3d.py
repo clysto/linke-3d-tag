@@ -1,7 +1,7 @@
 import concurrent.futures
 import math
-import socket
 from struct import unpack
+from pyglet.graphics.shader import Shader, ShaderProgram
 
 import numpy as np
 import pyglet
@@ -67,10 +67,39 @@ class TagModel:
     )
 
 
+vertex_source = """#version 150 core
+    in vec2 position;
+    in vec4 colors;
+    out vec4 vertex_colors;
+
+    uniform mat4 projection;
+
+    void main()
+    {
+        gl_Position = projection * vec4(position, 0.0, 1.0);
+        vertex_colors = colors;
+    }
+"""
+fragment_source = """#version 150 core
+    in vec4 vertex_colors;
+    out vec4 final_color;
+
+    void main()
+    {
+        final_color = vertex_colors;
+    }
+"""
+
+
 class Model:
     def __init__(self):
         self.batch = pyglet.graphics.Batch()
-        # self.draw_block((0, 0, 0), TagModel)
+        self.program = pyglet.shapes.get_default_shader()
+        self.vlist = self.program.vertex_list(
+            6,
+            gl.gl.GL_TRIANGLES,
+            self.batch,
+        )
 
     def update(self):
         self.batch = pyglet.graphics.Batch()
@@ -81,25 +110,30 @@ class Model:
         vertices = get_vertices(*position, [x_angle, y_angle, z_angle])
         faces = ("left", "right", "top", "bottom", "front", "back")
         for vertex, face in zip(vertices, faces):
-            self.batch.add(
+            self.program.vertex_list(
                 4,
                 gl.GL_QUADS,
-                block.textures[face],
-                ("v3f/static", vertex),
-                (
-                    "t2f/static",
-                    (
-                        0,
-                        0,
-                        0.796875,
-                        0,
-                        0.796875,
-                        0.65234375,
-                        0,
-                        0.65234375,
-                    ),
-                ),
+                self.batch,
             )
+            # self.batch.add(
+            #     4,
+            #     gl.GL_QUADS,
+            #     block.textures[face],
+            #     ("v3f/static", vertex),
+            #     (
+            #         "t2f/static",
+            #         (
+            #             0,
+            #             0,
+            #             0.796875,
+            #             0,
+            #             0.796875,
+            #             0.65234375,
+            #             0,
+            #             0.65234375,
+            #         ),
+            #     ),
+            # )
 
 
 class Player:
@@ -152,65 +186,65 @@ def set_3d(width, height):
 class Window(pyglet.window.Window):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.player = Player()
+        # self.player = Player()
         self.model = Model()
-        self.set_exclusive_mouse(True)
-        self.is_pause = False
-        pyglet.clock.schedule(self.update)
+        # self.set_exclusive_mouse(True)
+        # self.is_pause = False
+        # pyglet.clock.schedule(self.update)
 
-    def pause(self):
-        self.is_pause = True
-        self.set_exclusive_mouse(False)
+    # def pause(self):
+    #     self.is_pause = True
+    #     self.set_exclusive_mouse(False)
 
-    def on_mouse_motion(self, x, y, dx, dy):
-        if not self.is_pause:
-            self.player.mouse_motion(dx, dy)
+    # def on_mouse_motion(self, x, y, dx, dy):
+    #     if not self.is_pause:
+    #         self.player.mouse_motion(dx, dy)
 
-    def on_mouse_press(self, x, y, button, modifiers):
-        self.is_pause = False
-        self.set_exclusive_mouse(True)
+    # def on_mouse_press(self, x, y, button, modifiers):
+    #     self.is_pause = False
+    #     self.set_exclusive_mouse(True)
 
-    def on_key_press(self, symbol, modifiers):
-        if symbol == window.key.ESCAPE:
-            self.pause()
-        elif symbol == window.key.Q:
-            self.close()
-        speed = 1
-        if symbol == window.key.W:
-            self.player.strafe[0] = -speed
-        elif symbol == window.key.S:
-            self.player.strafe[0] = speed
-        elif symbol == window.key.A:
-            self.player.strafe[2] = -speed
-        elif symbol == window.key.D:
-            self.player.strafe[2] = speed
-        elif symbol == window.key.SPACE:
-            self.player.strafe[1] = speed
-        elif symbol == window.key.LSHIFT:
-            self.player.strafe[1] = -speed
+    # def on_key_press(self, symbol, modifiers):
+    #     if symbol == window.key.ESCAPE:
+    #         self.pause()
+    #     elif symbol == window.key.Q:
+    #         self.close()
+    #     speed = 1
+    #     if symbol == window.key.W:
+    #         self.player.strafe[0] = -speed
+    #     elif symbol == window.key.S:
+    #         self.player.strafe[0] = speed
+    #     elif symbol == window.key.A:
+    #         self.player.strafe[2] = -speed
+    #     elif symbol == window.key.D:
+    #         self.player.strafe[2] = speed
+    #     elif symbol == window.key.SPACE:
+    #         self.player.strafe[1] = speed
+    #     elif symbol == window.key.LSHIFT:
+    #         self.player.strafe[1] = -speed
 
-    def on_key_release(self, symbol, modifiers):
-        if symbol == window.key.W:
-            self.player.strafe[0] = 0
-        elif symbol == window.key.S:
-            self.player.strafe[0] = 0
-        elif symbol == window.key.A:
-            self.player.strafe[2] = 0
-        elif symbol == window.key.D:
-            self.player.strafe[2] = 0
-        elif symbol == window.key.SPACE:
-            self.player.strafe[1] = 0
-        elif symbol == window.key.LSHIFT:
-            self.player.strafe[1] = 0
+    # def on_key_release(self, symbol, modifiers):
+    #     if symbol == window.key.W:
+    #         self.player.strafe[0] = 0
+    #     elif symbol == window.key.S:
+    #         self.player.strafe[0] = 0
+    #     elif symbol == window.key.A:
+    #         self.player.strafe[2] = 0
+    #     elif symbol == window.key.D:
+    #         self.player.strafe[2] = 0
+    #     elif symbol == window.key.SPACE:
+    #         self.player.strafe[1] = 0
+    #     elif symbol == window.key.LSHIFT:
+    #         self.player.strafe[1] = 0
 
-    def update(self, dt):
-        self.player.update(dt)
-        self.model.update()
+    # def update(self, dt):
+    #     self.player.update(dt)
+    #     self.model.update()
 
     def on_draw(self):
         self.clear()
-        set_3d(*self.get_size())
-        draw_camera(self.player.position, self.player.rotation)
+        # set_3d(*self.get_size())
+        # draw_camera(self.player.position, self.player.rotation)
         self.model.batch.draw()
 
 
@@ -228,15 +262,13 @@ def gr_receiver():
     #     x_angle = math.atan(x / math.sqrt(y**2 + z**2))
     #     z_angle = math.atan(y / math.sqrt(x**2 + z**2))
     #     y_angle = math.atan(math.sqrt(x**2 + y**2) / z)
-        # print(x_angle, y_angle, z_angle)
+    # print(x_angle, y_angle, z_angle)
 
 
 def main():
-    with concurrent.futures.ThreadPoolExecutor() as pool:
-        pool.submit(gr_receiver)
-        Window(width=800 * 2, height=480 * 2, resizable=True)
-        gl.glClearColor(0, 0, 0, 1)  # black
-        pyglet.app.run()
+    Window(width=800, height=480, resizable=True)
+    # gl.glClearColor(0, 0, 0, 1)  # black
+    pyglet.app.run()
 
 
 if __name__ == "__main__":
