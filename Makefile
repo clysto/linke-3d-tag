@@ -26,7 +26,7 @@ OBJCOPY = $(GCC_DIR)/msp430-elf-objcopy
 FLASHER = $(MSPFLASHER)/MSP430Flasher
 MAKETXT = srec_cat
 
-CFLAGS   = -D__$(DEVICE)__ -mmcu=$(DEVICE) -mlarge -mcode-region=either -mdata-region=lower -Og -Wall -g
+CFLAGS   = -D__$(DEVICE)__ -mmcu=$(DEVICE) -mlarge -mcode-region=either -mdata-region=lower -O3 -Wall -g
 LDFLAGS  = -T $(LDDIR).ld -L $(SUPPORT_FILE_DIRECTORY) -Wl,-Map,$(MAP),--gc-sections
 INCLUDES = -I $(SUPPORT_FILE_DIRECTORY) -I driverlib
 

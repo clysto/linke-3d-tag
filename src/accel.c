@@ -8,7 +8,7 @@
 /* clang-format off */
 uint8_t const ADXL_READ_PARTID[] = {ADXL_CMD_READ_REG, ADXL_REG_PARTID, 0x00};
 uint8_t const ADXL_READ_DEVID[] = {ADXL_CMD_READ_REG, ADXL_REG_DEVID_AD, 0x00};
-uint8_t const ADXL_REAsxD_STATUS[] = {ADXL_CMD_READ_REG, ADXL_REG_STATUS, 0x00};
+uint8_t const ADXL_READ_STATUS[] = {ADXL_CMD_READ_REG, ADXL_REG_STATUS, 0x00};
 uint8_t const ADXL_READ_XYZ_8BIT[] = {ADXL_CMD_READ_REG, ADXL_REG_XDATA, 0x00, 0x00, 0x00};
 uint8_t const ADXL_READ_XYZ_16BIT[] = {ADXL_CMD_READ_REG, ADXL_REG_XDATA_L, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 uint8_t const ADXL_READ_XYZ_16BIT_FIFO[] = {ADXL_CMD_READ_FIFO, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
@@ -76,7 +76,7 @@ void ACCEL_init() {
 uint8_t ACCEL_status() {
   uint8_t rxBuf[16];
   GPIO_setOutputLowOnPin(GPIO_PORT_P4, GPIO_PIN3);
-  SPI_transaction(rxBuf, ADXL_REAsxD_STATUS, sizeof(ADXL_REAsxD_STATUS));
+  SPI_transaction(rxBuf, ADXL_READ_STATUS, sizeof(ADXL_READ_STATUS));
   GPIO_setOutputLowOnPin(GPIO_PORT_P4, GPIO_PIN3);
   return rxBuf[2];
 }
@@ -91,8 +91,6 @@ void ACCEL_singleSample(ACCEL_result *result) {
   GPIO_setOutputLowOnPin(GPIO_PORT_P4, GPIO_PIN3);
   SPI_transaction(rxBuf, ADXL_READ_XYZ_16BIT, sizeof(ADXL_READ_XYZ_16BIT));
   GPIO_setOutputHighOnPin(GPIO_PORT_P4, GPIO_PIN3);
-  // result->x = ((uint16_t)rxBuf[3] << 8) + rxBuf[2];
-  // result->y = ((uint16_t)rxBuf[5] << 8) + rxBuf[4];
-  // result->z = ((uint16_t)rxBuf[7] << 8) + rxBuf[6];
+
   memcpy(result, rxBuf + 2, 6);
 }

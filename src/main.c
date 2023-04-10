@@ -9,6 +9,8 @@
 uint16_t num = 0;
 
 void beforeSend(uint8_t *payload, int size) {
+  //   GPIO_setAsOutputPin(GPIO_PORT_P4, GPIO_PIN3);
+
   ACCEL_result accelResult;
   // 采集加速度数据
   ACCEL_singleSample(&accelResult);
@@ -25,8 +27,11 @@ void beforeSend(uint8_t *payload, int size) {
   memcpy(payload + 4 * sizeof(ACCEL_result), &accelResult,
          sizeof(ACCEL_result));
   memcpy(payload + 5 * sizeof(ACCEL_result), &num, sizeof(uint16_t));
+  //   GPIO_setAsInputPin(GPIO_PORT_P4, GPIO_PIN3);
   // memcpy(payload + sizeof(str) + sizeof(ACCEL_result), &num,
   // sizeof(uint32_t));
+  //   GPIO_setOutputLowOnPin(GPIO_PORT_P4, GPIO_PIN3);
+  //   EUSCI_A_SPI_transmitData(EUSCI_A1_BASE, 0x00);
   num++;
 }
 
@@ -46,11 +51,13 @@ int main(void) {
   CS_enableClockRequest(CS_SMCLK);
 
   // 初始化 LED
-  LED_init();
+  // LED不能初始化!!!!
+  // LED_init();
   // 初始化 SPI
   SPI_init();
   // 初始化加速度计
   ACCEL_init();
+  //   GPIO_setAsOutputPin(GPIO_PORT_P4, GPIO_PIN3);
 
   // P4.5 配置为天线使能
   GPIO_setAsOutputPin(GPIO_PORT_P4, GPIO_PIN5);
@@ -70,9 +77,9 @@ int main(void) {
 
   PMM_unlockLPM5();
 
-  LED_toggleLED1();
-  __delay_cycles(5000000);
-  LED_toggleLED1();
+  //   LED_toggleLED1();
+  //   __delay_cycles(5000000);
+  //   LED_toggleLED1();
 
   // GPIO_clearInterrupt(GPIO_PORT_P2, GPIO_PIN3);
   // 使能RX中断(rx_isr.S)
